@@ -118,7 +118,6 @@ window.addEventListener('DOMContentLoaded', function(){
             
             let inputs = input[i];
             
-            // console.log(input[i].name)
             if(inputs.name == "phone"){
                 inputs.onkeydown = function(e){
                     if(e.which>=48 && e.which <=57  || (e.which >=96 && e.which <=105) // num lock
@@ -179,6 +178,95 @@ window.addEventListener('DOMContentLoaded', function(){
         
             });
         }
-       
-});
+    // Slider
 
+    let sliderIndex = 1;
+    let slides = document.querySelectorAll('.slider-item');
+    let prev = document.querySelector('.prev');
+    let next = document.querySelector('.next');
+    let dotsWrap = document.querySelector('.slider-dots');
+    let dots = document.querySelectorAll('.dot');
+    showSlider(sliderIndex);
+    function showSlider(n){
+        if(n > slides.length) {
+            sliderIndex = 1;
+        }
+        if (n < 1){
+            sliderIndex = slides.length;
+
+        }
+        slides.forEach((item) => item.style.display = 'none');
+        // for (let i = 0; i < slider.length; i++){
+        //     slider[i].style.display = 'none';
+        // }
+        dots.forEach((item) => item.classList.remove('dot-active'));
+        slides[sliderIndex - 1].style.display = 'block';
+        dots[sliderIndex - 1].classList.add('dot-active');
+    }
+    
+    function plusSlides (n) {
+        showSlider(sliderIndex += n);
+    }
+    function currentSlide (n) {
+        showSlider(sliderIndex = n)
+    }
+    prev.addEventListener('click', function(){
+        plusSlides(-1);
+    });
+    next.addEventListener('click', function(){
+        plusSlides(1);
+    });
+    dotsWrap.addEventListener('click', function(event){
+        for (let i = 0; i < dots.length + 1; i++){
+            if(event.target.classList.contains('dot') && event.target == dots[i-1]){
+                currentSlide(i);
+            }
+        }
+    });
+
+    // calc
+    let person = document.querySelectorAll('.counter-block-input')[0];
+    let restDays = document.querySelectorAll('.counter-block-input')[1];
+    let place = document.getElementById('select');
+    let totalValue = document.getElementById('total');
+    let personsSum = 0;
+    let daysSum = 0;
+    let total = 0;
+
+
+    totalValue.textContent = 0;
+    function reg (elem) {
+        elem.value = elem.value.replace(/[^\d]/g)
+    }
+    person.addEventListener('input', function(){
+       reg(person);
+        personsSum = +this.value;
+
+        total = (daysSum + personsSum)*4000;
+
+        if(restDays.value == '' || person.value == '') {
+            totalValue.textContent = 0;
+        } else {
+            totalValue.textContent = total;
+        }
+    });
+    restDays.addEventListener('input', function(){
+        daysSum = +this.value;
+        total = (daysSum + personsSum)*4000;
+
+        if(person.value == '' || restDays.value == '') {
+            totalValue.textContent = 0;
+        } else {
+            totalValue.textContent = total;
+        }
+    });
+    place.addEventListener('input', function(){
+        if (restDays.value == '' || person.value == ''){
+            totalValue.textContent = 0;       
+        } else {
+            let a = total;
+            totalValue.textContent = a * this.options[this.selectedIndex].value;
+        }
+    })
+
+});
