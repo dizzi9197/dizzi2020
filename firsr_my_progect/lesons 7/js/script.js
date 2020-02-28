@@ -100,5 +100,85 @@ window.addEventListener('DOMContentLoaded', function(){
         more.classList.add('more-splash');
         document.body.style.overflow = '';
     });
+    // Form
+
+    let massage = {
+        loading: "Загрузка",
+        success: "Спастбо за заявку!",
+        failure: "Ошибка"
+    };
+
+    let form = document.getElementsByTagName('form'),
+        input = document.getElementsByTagName('input'),
+        statusMessage = document.createElement('div');
+
+        statusMessage.classList.add('status');
+
+        for (let i = 0; i < input.length; i++){
+            
+            let inputs = input[i];
+            
+            // console.log(input[i].name)
+            if(inputs.name == "phone"){
+                inputs.onkeydown = function(e){
+                    if(e.which>=48 && e.which <=57  || (e.which >=96 && e.which <=105) // num lock
+                    || e.which==8 // backspace
+                    || (e.which >=37 && e.which <=40) // стрелки
+                   || e.which==46 || e.which==107){
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            }
+
+            
+        }
+       
+        
+
+        for (let i = 0; i < form.length; i++){
+            
+
+            form[i].addEventListener('submit', function(event){
+                event.preventDefault();
+                
+                form[i].appendChild(statusMessage);
+        
+                let request = new XMLHttpRequest();
+                request.open('GET', 'server.php');
+                //request.setRequestHeader ('Content-Type', 'application/x-www-form-urlencoded');
+                request.setRequestHeader ('Content-Type', 'application/json; charset=utf-8');
+        
+                let formData = new FormData(form[i]);
+                let obj = {};
+                formData.forEach(function(value, key){
+                    obj[key] = value;
+                });
+                let json = JSON.stringify(obj);
+                request.send(json);
+        
+                
+        
+                console.log(json)
+                request.addEventListener('readystatechange', function(){
+                    if(request.readyState < 4) {
+                        statusMessage.innerHTML = massage.loading;
+                    } else if (request.readyState === 4 && request.status == 200) {
+                        statusMessage.innerHTML = massage.success;
+                    } else {
+                        statusMessage.innerHTML = massage.failure;
+                    }
+                });
+        
+                for (let i = 0; i < input.length; i++) {
+                    input[i].value = '';
+                    
+                }
+        
+        
+            });
+        }
+       
 });
 
